@@ -1,19 +1,17 @@
-use crate::lexer::Lexer;
-
+use crate::repl::repl_start;
+use anyhow::Result;
 
 mod lexer;
+mod repl;
 
-fn main() {
-    let input = "let five = 5;
-    let ten = 10;
-    let add = fn(x, y) {
-    x + y;
-    };
-    let result = add(five, ten);";
+fn main() -> Result<()> {
+    println!("Hello! This is the Monkey programming language!");
+    println!("Feel free to type in commands");
 
-    let mut lexer = Lexer::new(input.into());
+    let mut input = std::io::stdin();
+    let mut output = std::io::stdout();
 
-    let token = lexer.next_token();
+    repl_start(&mut input, &mut output)?;
 
-    println!("Hello, world!");
+    return Ok(());
 }

@@ -1,4 +1,6 @@
-#[derive(Debug, PartialEq)]
+use strum_macros::{EnumString, Display};
+
+#[derive(Debug, PartialEq, EnumString, Display)]
 pub enum Token {
     Int(String),
     Ident(String),
@@ -29,6 +31,7 @@ pub enum Token {
     NotEq,
 }
 
+#[derive(Debug, PartialEq)]
 pub struct Lexer {
     input: Vec<u8>,
     position: usize,
