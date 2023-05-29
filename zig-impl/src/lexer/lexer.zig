@@ -1,6 +1,6 @@
 const std = @import("std");
 
-const Token = union(enum) {
+pub const Token = union(enum) {
     Int: []const u8,
     Ident: []const u8,
     Illegal,
@@ -96,8 +96,8 @@ pub const Lexer = struct {
             },
             'a'...'z', 'A'...'Z', '_' => {
                 const ident = self.readIdent();
-                if (Token.getKeyword(ident)) |token| {
-                    return token;
+                if (Token.getKeyword(ident)) |tk| {
+                    return tk;
                 }
                 return .{ .Ident = ident };
             },
@@ -118,7 +118,7 @@ pub const Lexer = struct {
 
     fn readInt(self: *Self) []const u8 {
         const cur_position = self.position;
-        if (std.ascii.isAlphanumeric(self.char)) {
+        while (std.ascii.isDigit(self.char)) {
             self.readNext();
         }
 
@@ -126,16 +126,39 @@ pub const Lexer = struct {
     }
 
     fn readIdent(self: *Self) []const u8 {
-        const cur_position = self.position;
-        if (std.ascii.isAlphabetic(self.char) or self.char == '_') {
+        const position = self.position;
+        while (std.ascii.isAlphabetic(self.char) or self.char == '_') {
             self.readNext();
         }
 
-        return self.input[cur_position..self.position];
+        return self.input[position..self.position];
     }
 };
 
 test "lexer test 1" {
+    const input = "=+(){},;";
+    var lex = Lexer.init(input);
+
+    var tokens = [_]Token{
+        .Assign,
+        .Plus,
+        .Lparen,
+        .Rparen,
+        .Lbrace,
+        .Rbrace,
+        .Comma,
+        .Semicolon,
+        .Eof,
+    };
+
+    for (tokens) |token| {
+        const tok = lex.nextToken();
+
+        try std.testing.expectEqual(token, tok);
+    }
+}
+
+test "lexer test 2" {
     var input =
         \\let five = 5;
         \\let ten = 10;
@@ -186,9 +209,11 @@ test "lexer test 1" {
     };
 
     var lexer = Lexer.init(input);
-    for (tokens) |expectedToken| {
-        const token = lexer.nextToken();
-        std.debug.print("Expected {} received {}", .{ expectedToken, token });
-        try std.testing.expectEqual(expectedToken, token);
+    for (tokens) |expected| {
+        const actual = lexer.nextToken();
+
+        try std.testing.expect(std.meta.eql(expected, actual));
+        // try std.testing.expectEqual(@enumToInt(expected), @enumToInt(actual));
+        // std.debug.assert(@enumToInt(expected) != @enumToInt(actual));
     }
 }

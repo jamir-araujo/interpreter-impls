@@ -1,33 +1,29 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "zig-debug",
+            "name": "Zig Test Debug",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/zig-out/bin/zig-debug-test",
+            "program": "zig",
+            "args": [
+                "build",
+                "test"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "(lldb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/zig-out/bin/zig-impl.exe",
             "args": [],
+            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "preLaunchTask": "zig-debug-build"
-        },
-        {
-            "name": "zig-debug-test",
-            "type": "lldb",
-            "request": "launch",
-            "program": "${workspaceFolder}/zig-cache/o/8d3ec5647333441f99255e944dfaad5a/test",
-            "args": ["src/main.zig"],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "name": "zig-debug-test-single-file",
-            "type": "lldb",
-            "request": "launch",
-            "program": "${workspaceFolder}/zig-cache/o/a8b449b4d96f0d1ceb1e26c6642a38e7/test",
-            "args": ["src/introducing_zig_test.zig"],
-            "cwd": "${workspaceFolder}"
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "build"
         }
     ]
 }
