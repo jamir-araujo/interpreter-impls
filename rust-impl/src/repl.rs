@@ -3,7 +3,7 @@ use std::io::{Stdin, Stdout, Write};
 
 use crate::lexer::{Lexer, Token};
 
-pub fn repl_start(input: &mut Stdin, output: &mut Stdout) -> Result<()>{
+pub fn repl_start(input: &mut Stdin, output: &mut Stdout) -> Result<()> {
     let pronpt = ">>".as_bytes();
 
     let mut handler = output.lock();
@@ -25,6 +25,6 @@ pub fn repl_start(input: &mut Stdin, output: &mut Stdout) -> Result<()>{
 
         writeln!(handler, "{}", token.to_string())?;
     }
-    
+
     return Ok(());
 }
