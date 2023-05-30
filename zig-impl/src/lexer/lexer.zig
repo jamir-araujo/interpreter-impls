@@ -212,7 +212,13 @@ test "lexer test 2" {
     for (tokens) |expected| {
         const actual = lexer.nextToken();
 
-        try std.testing.expect(std.meta.eql(expected, actual));
+        switch (actual) {
+            .Ident => |id| try std.testing.expectEqual(id, expected),
+            .Int => |int| try std.testing.expectEqual(int, expected),
+            else => try std.testing.expect(std.meta.eql(expected, actual)),
+        }
+
+        // try std.testing.expect(std.meta.eql(expected, actual));
         // try std.testing.expectEqual(@enumToInt(expected), @enumToInt(actual));
         // std.debug.assert(@enumToInt(expected) != @enumToInt(actual));
     }
