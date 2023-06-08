@@ -92,7 +92,7 @@ pub const Lexer = struct {
             '<' => .Lt,
             '0'...'9' => {
                 const int = self.readInt();
-                return .{ .Ident = int };
+                return .{ .Int = int };
             },
             'a'...'z', 'A'...'Z', '_' => {
                 const ident = self.readIdent();
@@ -134,6 +134,29 @@ pub const Lexer = struct {
         return self.input[position..self.position];
     }
 };
+
+test "lexer test 0" {
+    const input = "let tests_var = 10;";
+    var lex = Lexer.init(input);
+
+    var tokens = [_]Token{
+        .Let,
+        .{ .Ident = "tests_var" },
+        // .Assign,
+        // .{ .Int = "10" },
+        // .Semicolon,
+    };
+
+    for (tokens) |token| {
+        const tok = lex.nextToken();
+
+        var name = @tagName(tok);
+        var t_name = @tagName(token);
+
+        try std.testing.expectEqual(t_name, name);
+        try std.testing.expectEqual(token, tok);
+    }
+}
 
 test "lexer test 1" {
     const input = "=+(){},;";
@@ -213,9 +236,19 @@ test "lexer test 2" {
         const actual = lexer.nextToken();
 
         switch (actual) {
-            .Ident => |id| try std.testing.expectEqual(id, expected),
-            .Int => |int| try std.testing.expectEqual(int, expected),
-            else => try std.testing.expect(std.meta.eql(expected, actual)),
+            .Ident => |a_id| {
+                switch (expected) {
+                    .Ident => |e_id| try std.testing.expectEqual(e_id, a_id),
+                    else => try std.testing.expectEqual(expected, actual),
+                }
+            },
+            .Int => |a_int| {
+                switch (expected) {
+                    .Int => |e_int| try std.testing.expectEqual(e_int, a_int),
+                    else => try std.testing.expectEqual(expected, actual),
+                }
+            },
+            else => try std.testing.expectEqual(expected, actual),
         }
 
         // try std.testing.expect(std.meta.eql(expected, actual));

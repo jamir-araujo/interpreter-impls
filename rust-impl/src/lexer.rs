@@ -1,6 +1,6 @@
-use strum_macros::{EnumString, Display};
+use strum_macros::{Display, EnumString};
 
-#[derive(Debug, PartialEq, EnumString, Display)]
+#[derive(Debug, PartialEq, EnumString, Display, Clone)]
 pub enum Token {
     Int(String),
     Ident(String),
@@ -103,7 +103,7 @@ impl Lexer {
                 }
 
                 token
-            },
+            }
             b'*' => Token::Asterisk,
             b'/' => Token::Slash,
             b'<' => Token::Lt,

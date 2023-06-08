@@ -1,7 +1,9 @@
 use crate::repl::repl_start;
 use anyhow::Result;
 
+pub mod ast;
 mod lexer;
+mod parser;
 mod repl;
 
 fn main() -> Result<()> {

@@ -18,75 +18,37 @@ pub fn main() !void {
 
     try stdout.print("Run `zig build test` to run the tests.\n", .{});
 
-    var input =
-        \\let five = 5;
-        \\let ten = 10;
-        \\let add = fn(x, y) {
-        \\x + y;
-        \\};
-        \\let result = add(five, ten);
-    ;
+    const input = "let tests_var = 10;";
+    var lex = lx.Lexer.init(input);
 
     var tokens = [_]lx.Token{
         .Let,
-        .{ .Ident = "five" },
-        .Assign,
-        .{ .Int = "5" },
-        .Semicolon,
-        .Let,
-        .{ .Ident = "ten" },
+        .{ .Ident = "tests_var" },
         .Assign,
         .{ .Int = "10" },
         .Semicolon,
-        .Let,
-        .{ .Ident = "add" },
-        .Assign,
-        .Function,
-        .Lparen,
-        .{ .Ident = "x" },
-        .Comma,
-        .{ .Ident = "y" },
-        .Rparen,
-        .Lbrace,
-        .{ .Ident = "x" },
-        .Plus,
-        .{ .Ident = "y" },
-        .Semicolon,
-        .Rbrace,
-        .Semicolon,
-        .Let,
-        .{ .Ident = "result" },
-        .Assign,
-        .{ .Ident = "add" },
-        .Lparen,
-        .{ .Ident = "five" },
-        .Comma,
-        .{ .Ident = "ten" },
-        .Rparen,
-        .Semicolon,
-        .Eof,
     };
 
-    var lexer = lx.Lexer.init(input);
-    for (tokens) |expected| {
-        const actual = lexer.nextToken();
+    for (tokens) |token| {
+        const tok = lex.nextToken();
 
-        // var a = tk == token;
-        const Tag = std.meta.Tag(@TypeOf(expected));
+        var name = @tagName(tok);
+        var t_name = @tagName(token);
 
-        const expectedTag = @as(Tag, expected);
-        _ = expectedTag;
-        const actualTag = @as(Tag, actual);
-        _ = actualTag;
+        std.debug.print("expected: {s}, actual: {s}\n", .{ t_name, name });
 
-        // std.debug.print("expectedTag: {} actualTag {}", .{ expectedTag, actualTag });
+        switch (token) {
+            .Ident => |id| std.debug.print("expected: {s}, actual: {s},\n", .{ "tests_var", id }),
+            .Int => |integer| std.debug.print("expected: {s}, actual: {s}", .{ "10", integer }),
+            else => std.debug.print("expected: {}, actual: {},\n", .{ token, tok }),
+        }
 
-        // // we only reach this loop if the tags are equal
-        // inline for (std.meta.fields(@TypeOf(actual))) |fld| {
-        //     if (std.mem.eql(u8, fld.name, @tagName(actualTag))) {
-        //         std.debug.print("expected: {} actual {}", .{ @field(expected, fld.name), @field(actual, fld.name) });
-        //     }
-        // }
+        std.debug.print("\n\n\nnew test\n", .{});
+
+        // std.debug.print(t_name, name);
+
+        // try std.testing.expectEqual(t_name, name);
+        // try std.testing.expectEqual(token, tok);
     }
 
     try bw.flush(); // don't forget to flush!
